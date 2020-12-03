@@ -12,7 +12,7 @@ const App = () => {
     }
   ]);
   function ValidateEmail(mail) {
-    if (mail.includes("@")) {
+    if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@*$/.test(mail)) {
       return true;
     }
 

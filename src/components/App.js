@@ -12,7 +12,9 @@ const App = () => {
     }
   ]);
   function ValidateEmail(mail) {
-    if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@/.test(mail)) {
+    if (
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z]+(?:\.[a-zA-Z]+)*$/.test(mail)
+    ) {
       return true;
     }
 

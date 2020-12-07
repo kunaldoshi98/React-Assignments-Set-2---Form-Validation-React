@@ -1,121 +1,143 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import "../styles/App.css";
 
-const App = () => {
-  let [ErrorMessage, setErrorMessage] = useState("");
-  const [input, setinput] = useState([
-    {
+export default class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       name: "",
       email: "",
       gender: "male",
-      phone: "",
-      password: ""
-    }
-  ]);
-  function ValidateEmail(mail) {
-    if (
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        mail
-      )
-    ) {
-      return true;
-    }
-
-    return false;
+      phNo: "",
+      password: "",
+      errorMessage: "",
+      userName: ""
+    };
   }
-  const handleclick = () => {
-    let main = input[0];
-    console.log(main);
-    let temp = main["name"];
-    let address = main["email"];
-    let password = main["password"];
-    let gender = main["gender"];
-    let phone = main["phone"];
+
+  handleNameChange = (event) => {
+    this.setState({ name: event.target.value });
+  };
+
+  handleEmailChange = (event) => {
+    this.setState({ email: event.target.value });
+  };
+
+  handlePhoneNoChange = (event) => {
+    this.setState({ phNo: event.target.value });
+  };
+
+  handlePasswordChange = (event) => {
+    this.setState({ password: event.target.value });
+  };
+
+  handleChangeValue = (event) => {
+    this.setState({ gender: event.target.value });
+  };
+
+  handleSubmit = () => {
+    const alphanumeric = /^[0-9a-zA-Z ]+$/;
+    const numbers = /^\d+$/;
     if (
-      temp === "" ||
-      address === "" ||
-      password === "" ||
-      gender === "" ||
-      phone === ""
+      this.state.name === "" ||
+      this.state.email === "" ||
+      this.state.phNo === "" ||
+      this.state.gender === "" ||
+      this.state.password === ""
     ) {
-      setErrorMessage("All fields are mandatory");
+      this.setState({ errorMessage: "All fields are mandatory", userName: "" });
       return;
     }
-    let cnt1 = 0;
-    let cnt2 = 0;
-    for (let i = 0; i < temp.length; i++) {
-      if (
-        (temp[i] >= "a" && temp[i] <= "z") ||
-        (temp[i] >= "A" && temp[i] <= "Z")
-      ) {
-        cnt1++;
-      } else if (Number(temp[i]) >= 0 && Number(temp[i]) <= 9) {
-        cnt2++;
-      }
-      if (cnt1 && cnt2) {
-        break;
-      }
-    }
-
-    if (!cnt1 || !cnt2) {
-      setErrorMessage("Name is not alphanumeric");
+    if (!this.state.name.match(alphanumeric)) {
+      this.setState({ errorMessage: "Name is not alphanumeric", userName: "" });
       return;
-    } else if (!ValidateEmail(address)) {
-      setErrorMessage("Email must contain @");
+    }
+    if (this.state.email.indexOf("@") < 1) {
+      this.setState({ errorMessage: "Email must contain @", userName: "" });
       return;
     }
 
-    if (isNaN(main["phone"])) {
-      setErrorMessage("Phone Number must contain only numbers");
+    if (!this.state.gender) {
+      this.setState({
+        errorMessage: "Please identify as male, female or others",
+        userName: ""
+      });
       return;
     }
-    if (main["password"].length < 6) {
-      setErrorMessage("Password must contain atleast 6 letters");
+    if (!numbers.test(this.state.phNo)) {
+      this.setState({
+        errorMessage: "Phone Number must contain only numbers",
+        userName: ""
+      });
       return;
     }
-    let info = main["email"];
-    info = info.substr(0, info.indexOf("@"));
-    console.log(info);
-    setErrorMessage("Hello " + info);
+    if (this.state.password.length < 6) {
+      this.setState({
+        errorMessage: "Password must contain atleast 6 letters",
+        userName: ""
+      });
+      return;
+    }
+    const user = this.state.email.substring(0, this.state.email.indexOf("@"));
+    this.setState({
+      userName: user,
+      errorMessage: "",
+      name: "",
+      email: "",
+      gender: "male",
+      phNo: "",
+      password: ""
+    });
   };
-  const handlechange = (e) => {
-    let dup = input;
-    dup = dup[0];
-    dup[e.target.name] = e.target.value;
-    setinput([dup]);
-  };
-  return (
-    <div id="main">
-      <div>{ErrorMessage}</div>
-      <label>Name:</label>
-      <input data-testid="name" name="name" onChange={handlechange} />
-      <br />
-      <label>Email address:</label>
-      <input data-testid="email" name="email" onChange={handlechange} />
-      <br />
-      <label>Gender:</label>
-      <input
-        value="male"
-        data-testid="gender"
-        name="gender"
-        onChange={handlechange}
-      />
-      <br />
-      <label>Phone number:</label>
-      <input data-testid="phoneNumber" name="phone" onChange={handlechange} />
-      <br />
-      <label>Password:</label>
-      <input
-        data-testid="password"
-        type="password"
-        name="password"
-        onChange={handlechange}
-      />
-      <br />
-      <button data-testid="submit" onClick={handleclick}>
-        Submit
-      </button>
-    </div>
-  );
-};
 
-export default App;
+  render() {
+    return (
+      <>
+        {this.state.errorMessage && <div>{this.state.errorMessage}</div>}
+        {this.state.userName && <div>Hello {this.state.userName}</div>}
+        <input
+          data-testid="name"
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={this.state.name}
+          onChange={this.handleNameChange}
+        />
+        <input
+          data-testid="email"
+          type="text"
+          name="email"
+          placeholder="Email"
+          value={this.state.email}
+          onChange={this.handleEmailChange}
+        />
+        <input
+          data-testid="gender"
+          type="text"
+          name="gender"
+          value={this.state.gender}
+          onChange={this.handleChangeValue}
+        />
+        <input
+          data-testid="phoneNumber"
+          type="text"
+          name="phoneNumber"
+          placeholder="Phone Number"
+          value={this.state.phNo}
+          onChange={this.handlePhoneNoChange}
+        />
+        <input
+          data-testid="password"
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={this.state.password}
+          onChange={this.handlePasswordChange}
+        />
+        <button data-testid="submit" onClick={this.handleSubmit}>
+          Submit
+        </button>
+      </>
+    );
+  }
+}
